@@ -1,7 +1,12 @@
 import { useState } from 'react'
 // updating the arrays
 function App() {
+  // To generate the numbers in an array
   const [array, setArray] = useState([])
+  // To set how many bars to display
+  const[size,setSize]=useState(30)
+  // to set the speed of sorting algo
+  const[speed,setSpeed]=useState(50)
 // to generate new array
   function generateArray(size) {
     const newArray = []
@@ -11,6 +16,19 @@ function App() {
     // intializing the array with setarray
     setArray(newArray)
   }
+// to change the size of array
+  function handleSizeChange(e) {
+    const newSize=Number(e.target.value)
+    // changed the size
+    setSize(newSize)
+    // passed to generate the new sized array
+    generateArray(newSize)
+  }
+// to change the speed of algo
+  function  handleSpeedChange(e) {
+    const newSpeed=Number(e.target.value)
+    setSpeed(newSpeed)
+  }
 // React displays after below return statement
   return (
     <div className="bg-slate-800 text-white text-center font-sans min-h-screen pt-6">
@@ -19,7 +37,7 @@ function App() {
       <div className="flex flex-wrap justify-center items-center gap-3 mb-6">
         <button
         // () => this is array function i.e generates the arrays
-          onClick={() => generateArray(30)}
+          onClick={() => generateArray(size)}
           className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded"
         >
           Generate New Array
@@ -27,7 +45,30 @@ function App() {
         <button className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded">
           Start Sort
         </button>
+      <label className='flex items-center gap-2'>
+        Size: {size}
+        <input 
+          type="range" 
+          min="5"
+          max="100"
+          value={size}
+          onChange={handleSizeChange}
+        />
+      </label>
+      
+      <label className='flex items-center gap-2'>
+        Speed: {speed}
+        <input 
+          type="range" 
+          min="1"
+          max="100"
+          value={speed}
+          onChange={handleSpeedChange}
+        />
+      </label>
       </div>
+      
+
       {/* bars part */}
       <div className="flex items-end justify-center h-96 gap-[2px]">
         {array.map((value, index) => (
