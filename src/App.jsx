@@ -29,6 +29,26 @@ function App() {
     const newSpeed=Number(e.target.value)
     setSpeed(newSpeed)
   }
+// to slow down the animation
+function wait(ms) {
+  return new Promise((resolve)=>setTimeout(resolve,ms))
+}
+// bubble sort
+async function bubbleSort() {
+  let arr=[...array]
+  const n=arr.length
+  for(let i=0;i<n-1;i++){
+    for(let j=0;j<n-1-i;j++){
+      if(arr[j]>arr[j+1]){
+          let temp=arr[j]
+          arr[j]=arr[j+1]
+          arr[j+1]=temp
+          setArray([...arr])
+          await wait(101-speed)
+      }}
+  }
+  }
+
 // React displays after below return statement
   return (
     <div className="bg-slate-800 text-white text-center font-sans min-h-screen pt-6">
@@ -42,7 +62,7 @@ function App() {
         >
           Generate New Array
         </button>
-        <button className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded">
+        <button onClick={bubbleSort} className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded">
           Start Sort
         </button>
       <label className='flex items-center gap-2'>
@@ -83,6 +103,6 @@ function App() {
       </div>
     </div>
   )
-}
 
+}
 export default App
