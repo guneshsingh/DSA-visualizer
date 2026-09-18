@@ -7,6 +7,13 @@ function App() {
   const[size,setSize]=useState(30)
   // to set the speed of sorting algo
   const[speed,setSpeed]=useState(50)
+  // selects the bubble sort algo
+  const[algorithm,setalgorithm]=useState('bubble')
+  // makes the drop down method
+  const[sorting,setSorting]=useState(false)
+
+
+
 // to generate new array
   function generateArray(size) {
     const newArray = []
@@ -48,7 +55,52 @@ async function bubbleSort() {
       }}
   }
   }
-
+// insertion sort
+async function insertionSort() {
+  let arr=[...array]
+  const n=arr.length;
+  for(let i=1;i<n;i++){
+    let key=arr[i]
+    let j=i-1
+    while(j>=0 && arr[j]>key){
+      arr[j+1]=arr[j]
+      j--
+      setArray([...arr])
+      await wait(101-speed)
+    }
+    arr[j+1]=key
+    setArray([...arr])
+    await wait(101-speed)
+  }
+}
+// selection sort
+async function selectionSort() {
+  let arr=[...array]
+  const n=arr.length
+  for(let i=0;i<n-1;i++){
+    let minIdx=i
+    for(let j=i+1;j<n;j++){
+      if(arr[j]<arr[minIdx]){
+        minIdx=j
+      }
+    }
+    if(minIdx!==i){
+      let temp=arr[i]
+      arr[i]=arr[minIdx]
+      arr[minIdx]=temp
+      setArray([...arr])
+      await wait(101-speed)
+    }
+  }
+}
+// locking a specific sorting
+async function startSort() {
+    setSorting(true)          // lock UI
+    if (algorithm === 'bubble') await bubbleSort()
+    if (algorithm === 'insertion') await insertionSort()
+    if (algorithm === 'selection') await selectionSort()
+    setSorting(false)         // unlock UI
+  }
 // React displays after below return statement
   return (
     <div className="bg-slate-800 text-white text-center font-sans min-h-screen pt-6">
@@ -62,9 +114,19 @@ async function bubbleSort() {
         >
           Generate New Array
         </button>
-        <button onClick={bubbleSort} className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded">
+        <button onClick={startSort} className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded">
           Start Sort
         </button>
+         <select
+          value={algorithm}
+          onChange={(e) => setalgorithm(e.target.value)}
+          disabled={sorting}
+          className="bg-slate-700 px-3 py-2 rounded disabled:opacity-40"
+        >
+          <option value="bubble">Bubble Sort</option>
+          <option value="insertion">Insertion Sort</option>
+          <option value="selection">Selection Sort</option>
+        </select>
       <label className='flex items-center gap-2'>
         Size: {size}
         <input 
