@@ -11,7 +11,10 @@ function App() {
   const[algorithm,setalgorithm]=useState('bubble')
   // makes the drop down method
   const[sorting,setSorting]=useState(false)
-
+  // indices currently being compared
+  const [comparing, setComparing] = useState([])      
+  // indices confirmed in final position
+  const [sortedIndices, setSortedIndices] = useState([])
 
 
 // to generate new array
@@ -22,6 +25,8 @@ function App() {
     }
     // intializing the array with setarray
     setArray(newArray)
+    setComparing([])
+    setSortedIndices([])
   }
 // to change the size of array
   function handleSizeChange(e) {
@@ -46,6 +51,9 @@ async function bubbleSort() {
   const n=arr.length
   for(let i=0;i<n-1;i++){
     for(let j=0;j<n-1-i;j++){
+      // comparing these 2 index
+      setComparing([j,j+1])
+      await wait(101-speed)
       if(arr[j]>arr[j+1]){
           let temp=arr[j]
           arr[j]=arr[j+1]
@@ -53,7 +61,12 @@ async function bubbleSort() {
           setArray([...arr])
           await wait(101-speed)
       }}
+      // locked position 
+      setSortedIndices(prev=>[...prev,n-i-1])
   }
+  // last element sorted making it green
+  setSortedIndices(prev=>[...prev,0])
+  setComparing([])
   }
 // insertion sort
 async function insertionSort() {
@@ -153,15 +166,20 @@ async function startSort() {
 
       {/* bars part */}
       <div className="flex items-end justify-center h-96 gap-[2px]">
-        {array.map((value, index) => (
+        {array.map((value, index) => {
+          // default color
+          let color='bg-blue-300'
+          if (comparing.includes(index)) color = 'bg-yellow-400'
+          if (sortedIndices.includes(index)) color = 'bg-green-400'
+        return (
           // for each elemnt u have to create a div
           <div
             key={index}
-            className="bg-blue-300 w-4"
+            className={`${color} w-4`}
             // make height of the bars equal to the no.s in px
             style={{ height: `${value}px` }}
           ></div>
-        ))}
+        )})}
       </div>
     </div>
   )
