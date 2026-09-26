@@ -76,6 +76,7 @@ async function insertionSort() {
     let key=arr[i]
     let j=i-1
     while(j>=0 && arr[j]>key){
+      setComparing([j,j+1])
       arr[j+1]=arr[j]
       j--
       setArray([...arr])
@@ -85,6 +86,11 @@ async function insertionSort() {
     setArray([...arr])
     await wait(101-speed)
   }
+  // last element sorted so green
+  setComparing([])
+  // at the end all are sorted
+  setSortedIndices(Array.from({length:n},(_,idx)=>idx))
+  
 }
 // selection sort
 async function selectionSort() {
@@ -93,6 +99,8 @@ async function selectionSort() {
   for(let i=0;i<n-1;i++){
     let minIdx=i
     for(let j=i+1;j<n;j++){
+      setComparing([i,j])
+      await wait(101-speed)
       if(arr[j]<arr[minIdx]){
         minIdx=j
       }
@@ -104,7 +112,10 @@ async function selectionSort() {
       setArray([...arr])
       await wait(101-speed)
     }
+    setSortedIndices(prev=>[...prev,i])
   }
+  setSortedIndices(prev=>[...prev,n-1])
+  setComparing([])
 }
 // locking a specific sorting
 async function startSort() {
