@@ -117,12 +117,112 @@ async function selectionSort() {
   setSortedIndices(prev=>[...prev,n-1])
   setComparing([])
 }
+// merge sort
+async function mergeSort() { //async function bcz delay in motion
+  let arr = [...array]
+  await mergeSortHelper(arr, 0, arr.length - 1)
+  setComparing([])
+  setSortedIndices(Array.from({ length: arr.length }, (_, idx) => idx)) //for indexes
+}
+
+async function mergeSortHelper(arr, left, right) {//division of array
+  if (left >= right) return                 // base case: 0 or 1 element
+  const mid = Math.floor((left + right) / 2)
+  await mergeSortHelper(arr, left, mid)     // sort left half
+  await mergeSortHelper(arr, mid + 1, right) // sort right half
+  await merge(arr, left, mid, right)        // merge the two sorted halves
+}
+
+async function merge(arr, left, mid, right) {
+  const leftPart = arr.slice(left, mid + 1)
+  const rightPart = arr.slice(mid + 1, right + 1)
+  let i = 0, j = 0, k = left
+
+  while (i < leftPart.length && j < rightPart.length) {
+    if (leftPart[i] <= rightPart[j]) {
+      arr[k] = leftPart[i]
+      i++
+    } else {
+      arr[k] = rightPart[j]
+      j++
+    }
+    setComparing([k])
+    setArray([...arr])
+    await wait(101 - speed)
+    k++
+  }
+
+  while (i < leftPart.length) {
+    arr[k] = leftPart[i]
+    i++
+    setComparing([k])
+    setArray([...arr])
+    await wait(101 - speed)
+    k++
+  }
+
+  while (j < rightPart.length) {
+    arr[k] = rightPart[j]
+    j++
+    setComparing([k])
+    setArray([...arr])
+    await wait(101 - speed)
+    k++
+  }
+}
+
+// quick sort
+async function quickSort() {
+  let arr = [...array]
+  await quickSortHelper(arr, 0, arr.length - 1)
+  setComparing([])
+  setSortedIndices(Array.from({ length: arr.length }, (_, idx) => idx))
+}
+
+async function quickSortHelper(arr, low, high) {
+  if (low >= high) return
+  const pivotIndex = await partition(arr, low, high)
+  await quickSortHelper(arr, low, pivotIndex - 1)
+  await quickSortHelper(arr, pivotIndex + 1, high)
+}
+
+async function partition(arr, low, high) {
+  const pivot = arr[high]          // last element is the pivot
+  let i = low - 1
+
+  for (let j = low; j < high; j++) {
+    setComparing([j, high])
+    await wait(101 - speed)
+    if (arr[j] < pivot) {
+      i++
+      let temp = arr[i]
+      arr[i] = arr[j]
+      arr[j] = temp
+      setArray([...arr])
+      await wait(101 - speed)
+    }
+  }
+
+  // put pivot in its final position
+  let temp = arr[i + 1]
+  arr[i + 1] = arr[high]
+  arr[high] = temp
+  setArray([...arr])
+  setSortedIndices(prev => [...prev, i + 1])   // pivot is now locked in place
+  await wait(101 - speed)
+
+  return i + 1
+}
+
+
 // locking a specific sorting
 async function startSort() {
     setSorting(true)          // lock UI
     if (algorithm === 'bubble') await bubbleSort()
     if (algorithm === 'insertion') await insertionSort()
     if (algorithm === 'selection') await selectionSort()
+    if (algorithm === 'merge') await mergeSort()
+    if (algorithm === 'quick') await quickSort()
     setSorting(false)         // unlock UI
   }
 // React displays after below return statement
@@ -150,6 +250,8 @@ async function startSort() {
           <option value="bubble">Bubble Sort</option>
           <option value="insertion">Insertion Sort</option>
           <option value="selection">Selection Sort</option>
+          <option value="merge">Merge Sort</option>
+          <option value="quick">Quick Sort</option>
         </select>
       <label className='flex items-center gap-2'>
         Size: {size}
